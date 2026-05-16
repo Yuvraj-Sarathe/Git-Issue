@@ -1,0 +1,6 @@
+{
+  "name": "GitHub Issue Explorer",
+  "description": "Browse, filter, and sort GitHub repository issues with label tracking and customizable views entirely client-side.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
