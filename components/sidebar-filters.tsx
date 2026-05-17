@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils';
 interface SidebarFiltersProps {
   unassignedFilter: boolean;
   onUnassignedChange: (value: boolean) => void;
+  noCommentsFilter: boolean;
+  onNoCommentsChange: (value: boolean) => void;
   activeLabels: string[];
   excludedLabels: string[];
   onToggleLabel: (name: string) => void;
@@ -69,6 +71,8 @@ export function SidebarFilters(props: SidebarFiltersProps) {
   const {
     unassignedFilter,
     onUnassignedChange,
+    noCommentsFilter,
+    onNoCommentsChange,
     activeLabels,
     excludedLabels,
     onToggleLabel,
@@ -112,6 +116,31 @@ export function SidebarFilters(props: SidebarFiltersProps) {
             <div>
               <span className="text-sm font-medium text-[var(--text-primary)]">Unassigned Only</span>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">Issues seeking an owner</p>
+            </div>
+          </label>
+
+          <label className="flex items-start gap-3 cursor-pointer group mt-4">
+            <div className="relative flex items-center mt-0.5">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={noCommentsFilter}
+                onChange={(e) => onNoCommentsChange(e.target.checked)}
+              />
+              <div
+                className={cn(
+                  "w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-200",
+                  noCommentsFilter
+                    ? "bg-[var(--primary)]/20 border-[var(--primary)]/50"
+                    : "bg-black/40 border-white/[0.08] group-hover:border-white/[0.15]"
+                )}
+              >
+                {noCommentsFilter && <Check className="w-3 h-3 text-[var(--primary)]" />}
+              </div>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-[var(--text-primary)]">No Comments</span>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">Fresh untouched issues only</p>
             </div>
           </label>
         </div>

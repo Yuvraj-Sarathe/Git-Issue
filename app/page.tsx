@@ -85,6 +85,7 @@ export default function GlobalGitHubIssueExplorer() {
   const [pagination, setPagination] = useState<PaginationUrls>({});
   const [sortParam, setSortParam] = useState('created-desc');
   const [unassignedFilter, setUnassignedFilter] = useState(false);
+  const [noCommentsFilter, setNoCommentsFilter] = useState(false);
   const [activeLabels, setActiveLabels] = useState<string[]>([]);
   const [excludedLabels, setExcludedLabels] = useState<string[]>([]);
   const [activeLanguages, setActiveLanguages] = useState<string[]>([]);
@@ -160,11 +161,12 @@ export default function GlobalGitHubIssueExplorer() {
     const parts = ['type:issue', 'state:open'];
     if (searchInput) parts.push(searchInput);
     if (unassignedFilter) parts.push('no:assignee');
+    if (noCommentsFilter) parts.push('comments:0');
     activeLabels.forEach((label) => parts.push(`label:"${label}"`));
     excludedLabels.forEach((label) => parts.push(`-label:"${label}"`));
     activeLanguages.forEach((lang) => parts.push(`language:${lang}`));
     return parts.join(' ');
-  }, [searchInput, unassignedFilter, activeLabels, excludedLabels, activeLanguages]);
+  }, [searchInput, unassignedFilter, noCommentsFilter, activeLabels, excludedLabels, activeLanguages]);
 
   const fetchIssuesList = useCallback(
     async (pageUrl?: string) => {
@@ -221,7 +223,7 @@ export default function GlobalGitHubIssueExplorer() {
   useEffect(() => {
     const timeoutId = setTimeout(() => fetchIssuesList(), 500);
     return () => clearTimeout(timeoutId);
-  }, [sortParam, activeLabels, excludedLabels, activeLanguages, unassignedFilter, fetchIssuesList]);
+  }, [sortParam, activeLabels, excludedLabels, activeLanguages, unassignedFilter, noCommentsFilter, fetchIssuesList]);
 
   const toggleLabel = (labelName: string) => {
     setExcludedLabels((prev) => prev.filter((l) => l !== labelName));
@@ -279,10 +281,11 @@ export default function GlobalGitHubIssueExplorer() {
     setExcludedLabels([]);
     setActiveLanguages([]);
     setUnassignedFilter(false);
+    setNoCommentsFilter(false);
   };
 
   const hasActiveFilters =
-    activeLabels.length > 0 || activeLanguages.length > 0 || unassignedFilter;
+    activeLabels.length > 0 || activeLanguages.length > 0 || unassignedFilter || noCommentsFilter;
 
   return (
     <div className="min-h-screen bg-[var(--ground)]">
@@ -318,6 +321,8 @@ export default function GlobalGitHubIssueExplorer() {
           <SidebarFilters
             unassignedFilter={unassignedFilter}
             onUnassignedChange={setUnassignedFilter}
+            noCommentsFilter={noCommentsFilter}
+            onNoCommentsChange={setNoCommentsFilter}
             activeLabels={activeLabels}
             excludedLabels={excludedLabels}
             onToggleLabel={toggleLabel}
@@ -384,6 +389,8 @@ export default function GlobalGitHubIssueExplorer() {
             <ActiveFilters
               unassignedFilter={unassignedFilter}
               onClearUnassigned={() => setUnassignedFilter(false)}
+              noCommentsFilter={noCommentsFilter}
+              onClearNoComments={() => setNoCommentsFilter(false)}
               activeLabels={activeLabels}
               excludedLabels={excludedLabels}
               onRemoveLabel={toggleLabel}

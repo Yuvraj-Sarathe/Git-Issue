@@ -5,6 +5,8 @@ import { X, User, Tag, Code } from 'lucide-react';
 interface ActiveFiltersProps {
   unassignedFilter: boolean;
   onClearUnassigned: () => void;
+  noCommentsFilter: boolean;
+  onClearNoComments: () => void;
   activeLabels: string[];
   excludedLabels: string[];
   onRemoveLabel: (name: string) => void;
@@ -17,6 +19,8 @@ interface ActiveFiltersProps {
 export function ActiveFilters({
   unassignedFilter,
   onClearUnassigned,
+  noCommentsFilter,
+  onClearNoComments,
   activeLabels,
   excludedLabels,
   onRemoveLabel,
@@ -25,7 +29,7 @@ export function ActiveFilters({
   onRemoveLanguage,
   onClearAll,
 }: ActiveFiltersProps) {
-  const hasAny = unassignedFilter || activeLabels.length > 0 || excludedLabels.length > 0 || activeLanguages.length > 0;
+  const hasAny = unassignedFilter || noCommentsFilter || activeLabels.length > 0 || excludedLabels.length > 0 || activeLanguages.length > 0;
   if (!hasAny) return null;
 
   return (
@@ -41,6 +45,18 @@ export function ActiveFilters({
               <User className="w-3 h-3" /> Unassigned
               <button
                 onClick={onClearUnassigned}
+                className="ml-0.5 hover:text-white transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
+
+          {noCommentsFilter && (
+            <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-[var(--accent-green)]/10 text-[var(--accent-green)] border border-[var(--accent-green)]/20">
+              <X className="w-3 h-3" /> No Comments
+              <button
+                onClick={onClearNoComments}
                 className="ml-0.5 hover:text-white transition-colors"
               >
                 <X className="w-3 h-3" />
