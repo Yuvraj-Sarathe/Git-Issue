@@ -1,6 +1,6 @@
 'use client';
 
-import { Filter, Tag, Code, Check, X, Sprout } from 'lucide-react';
+import { Filter, Tag, Code, Check, X, Sprout, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SidebarFiltersProps {
@@ -42,6 +42,15 @@ const LABELS = [
   { name: "backend", color: "bbf7d0", description: "" },
   { name: "database", color: "fde047", description: "" },
   { name: "management", color: "cbd5e1", description: "" },
+];
+
+const TRENDING = [
+  { name: 'gssoc', color: 'ff6b6b' },
+  { name: 'hacktoberfest', color: 'ffa94d' },
+  { name: 'jwoc', color: '69db7c' },
+  { name: 'kwoc', color: '4dabf7' },
+  { name: 'iwoc', color: 'da77f2' },
+  { name: 'dwoc', color: 'f783ac' },
 ];
 
 const LANGUAGES = [
@@ -199,6 +208,52 @@ export function SidebarFilters(props: SidebarFiltersProps) {
             <p className="text-[10px] text-[var(--text-muted)] mt-1">
               Press Enter to {customLabelExcludeMode ? 'exclude' : 'add'}.
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Trending */}
+      <div className="bg-white/[0.04] border border-white/[0.10] p-1.5 rounded-[2rem]">
+        <div className="bg-[var(--surface)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] rounded-[calc(2rem-0.375rem)] p-5">
+          <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-[0.15em] mb-4 flex items-center gap-2">
+            <TrendingUp className="w-3.5 h-3.5 text-[var(--accent-green)]" /> Trending
+          </h3>
+          <div className="flex flex-wrap gap-1.5">
+            {TRENDING.map((t) => {
+              const isActive = activeLabels.includes(t.name);
+              const isExcluded = excludedLabels.includes(t.name);
+              const bgColor = `#${t.color}`;
+              return (
+                <button
+                  key={t.name}
+                  onClick={() => {
+                    if (isActive) onToggleExcludeLabel(t.name);
+                    else if (isExcluded) onToggleExcludeLabel(t.name);
+                    else onToggleLabel(t.name);
+                  }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    if (!isExcluded) onToggleExcludeLabel(t.name);
+                  }}
+                  className={cn(
+                    "text-[11px] px-2.5 py-1.5 rounded-full font-medium transition-all border flex items-center gap-1",
+                    isActive
+                      ? "ring-2 ring-[var(--primary)]/40 ring-offset-1 ring-offset-[var(--surface)] scale-105"
+                      : isExcluded
+                        ? "ring-2 ring-[var(--accent-red)]/50 ring-offset-1 ring-offset-[var(--surface)] scale-105 opacity-70 line-through"
+                        : "opacity-80 hover:opacity-100 hover:scale-105"
+                  )}
+                  style={{
+                    backgroundColor: bgColor,
+                    color: '#000',
+                    borderColor: isExcluded ? 'rgba(239,68,68,0.4)' : 'rgba(0,0,0,0.15)',
+                  }}
+                >
+                  {isExcluded ? <X className="w-2.5 h-2.5" /> : <TrendingUp className="w-2.5 h-2.5" />}
+                  {t.name}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

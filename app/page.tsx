@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { Search, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Search, AlertCircle, ChevronDown } from 'lucide-react';
 import { FloatingHeader } from '@/components/floating-header';
 import { SidebarFilters } from '@/components/sidebar-filters';
 import { ActiveFilters } from '@/components/active-filters';
@@ -62,8 +62,18 @@ const parseLinkHeader = (header: string | null): PaginationUrls => {
   return result;
 };
 
+const SORT_OPTIONS = [
+  { value: 'created-desc', label: 'Newest' },
+  { value: 'created-asc', label: 'Oldest' },
+  { value: 'comments-desc', label: 'Most commented' },
+  { value: 'updated-desc', label: 'Recently updated' },
+  { value: 'best-match', label: 'Best match' },
+];
+
 export default function GlobalGitHubIssueExplorer() {
   const [searchInput, setSearchInput] = useState('');
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
   const [issues, setIssues] = useState<GitHubIssue[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -84,6 +94,16 @@ export default function GlobalGitHubIssueExplorer() {
   useEffect(() => {
     const savedPat = localStorage.getItem('githubPat');
     if (savedPat) setPat(savedPat);
+  }, []);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
   useEffect(() => {
@@ -329,18 +349,35 @@ export default function GlobalGitHubIssueExplorer() {
                 <span className="text-xs text-[var(--text-muted)] font-medium">
                   Sort:
                 </span>
-                <select
-                  value={sortParam}
-                  onChange={(e) => setSortParam(e.target.value)}
-                  className="text-sm border-none bg-transparent focus:outline-none text-[var(--text-primary)] font-medium cursor-pointer"
-                  style={{ colorScheme: 'dark' }}
-                >
-                  <option value="created-desc">Newest</option>
-                  <option value="created-asc">Oldest</option>
-                  <option value="comments-desc">Most commented</option>
-                  <option value="updated-desc">Recently updated</option>
-                  <option value="best-match">Best match</option>
-                </select>
+                <div className="relative" ref={sortRef}>
+                  <button
+                    onClick={() => setSortOpen((o) => !o)}
+                    className="flex items-center gap-1 text-sm font-medium text-[var(--text-primary)] cursor-pointer whitespace-nowrap"
+                  >
+                    {SORT_OPTIONS.find((o) => o.value === sortParam)?.label}
+                    <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                  </button>
+                  {sortOpen && (
+                    <div className="absolute right-0 top-full mt-2 min-w-[160px] bg-[var(--surface)] border border-white/[0.10] rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50">
+                      {SORT_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => {
+                            setSortParam(opt.value);
+                            setSortOpen(false);
+                          }}
+                          className={`w-full text-left text-sm px-4 py-2 transition-colors ${
+                            sortParam === opt.value
+                              ? 'text-[var(--primary)] bg-[var(--primary)]/10'
+                              : 'text-[var(--text-primary)] hover:bg-white/[0.06]'
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
