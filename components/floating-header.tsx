@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, Settings, CircleDot } from 'lucide-react';
+import { Search, Settings } from 'lucide-react';
 
 interface RateLimit {
   limit: number;
@@ -27,9 +27,9 @@ export function FloatingHeader({
     <nav className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] sm:min-w-[640px] max-w-4xl">
       <div className="backdrop-blur-2xl bg-black/60 border border-white/[0.08] rounded-full px-3 sm:px-5 py-2 sm:py-2.5 shadow-2xl shadow-black/40">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center">
-              <CircleDot className="w-4 h-4 text-[var(--primary)]" />
+            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center overflow-hidden">
+              <img src="/logo.png" alt="GitIssue" className="w-5 h-5 object-contain" />
             </div>
             <span className="hidden sm:inline font-display text-lg font-semibold text-[var(--text-primary)] tracking-tight">
               GitIssue

@@ -12,6 +12,10 @@ const syne = Syne({
 export const metadata: Metadata = {
   title: 'Global Issue Explorer',
   description: 'Git Issue — cross-repo GitHub issue search',
+  icons: {
+    icon: '/icon.png',
+    apple: '/apple-icon.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
