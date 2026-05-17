@@ -307,6 +307,7 @@ export default function GlobalGitHubIssueExplorer() {
                   value={sortParam}
                   onChange={(e) => setSortParam(e.target.value)}
                   className="text-sm border-none bg-transparent focus:outline-none text-[var(--text-primary)] font-medium cursor-pointer"
+                  style={{ colorScheme: 'dark' }}
                 >
                   <option value="created-desc">Newest</option>
                   <option value="created-asc">Oldest</option>
