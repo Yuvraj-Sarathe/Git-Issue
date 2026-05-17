@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Syne } from 'next/font/google';
-import { GeistSans } from 'geist/font/sans';
+// Removed GeistSans import: package not present in build environment
 import './globals.css';
 
 const syne = Syne({
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${syne.variable}`}>
+    <html lang="en" className={syne.variable}>
       <body
         suppressHydrationWarning
         className="font-sans antialiased bg-[var(--ground)] text-[var(--text-primary)] selection:bg-[var(--primary)]/20"
