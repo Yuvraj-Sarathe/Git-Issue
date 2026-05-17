@@ -15,6 +15,8 @@ interface SidebarFiltersProps {
   customLabelInput: string;
   onCustomLabelChange: (value: string) => void;
   onCustomLabelKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  customLabelExcludeMode: boolean;
+  onCustomLabelExcludeModeChange: (value: boolean) => void;
 }
 
 const LABELS = [
@@ -67,6 +69,8 @@ export function SidebarFilters(props: SidebarFiltersProps) {
     customLabelInput,
     onCustomLabelChange,
     onCustomLabelKeyDown,
+    customLabelExcludeMode,
+    onCustomLabelExcludeModeChange,
   } = props;
 
   return (
@@ -160,6 +164,30 @@ export function SidebarFilters(props: SidebarFiltersProps) {
             <label className="block text-xs font-medium text-[var(--text-muted)] mb-1.5">
               Custom Label Search
             </label>
+            <div className="flex gap-1.5 mb-1.5">
+              <button
+                onClick={() => onCustomLabelExcludeModeChange(false)}
+                className={cn(
+                  "text-[11px] px-2.5 py-1 rounded-lg font-medium transition-all border flex items-center gap-1",
+                  !customLabelExcludeMode
+                    ? "bg-[var(--primary)]/10 text-[var(--primary)] border-[var(--primary)]/30"
+                    : "bg-black/40 text-[var(--text-muted)] border-white/[0.06] hover:border-white/[0.15]"
+                )}
+              >
+                Include
+              </button>
+              <button
+                onClick={() => onCustomLabelExcludeModeChange(true)}
+                className={cn(
+                  "text-[11px] px-2.5 py-1 rounded-lg font-medium transition-all border flex items-center gap-1",
+                  customLabelExcludeMode
+                    ? "bg-[var(--accent-red)]/10 text-[var(--accent-red)] border-[var(--accent-red)]/30"
+                    : "bg-black/40 text-[var(--text-muted)] border-white/[0.06] hover:border-white/[0.15]"
+                )}
+              >
+                <X className="w-2.5 h-2.5" /> Exclude
+              </button>
+            </div>
             <input
               type="text"
               placeholder="e.g. hacktoberfest..."
@@ -168,7 +196,9 @@ export function SidebarFilters(props: SidebarFiltersProps) {
               onKeyDown={onCustomLabelKeyDown}
               className="w-full text-sm px-3.5 py-2 bg-black/40 border border-white/[0.08] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)]/40 focus:ring-1 focus:ring-[var(--primary)]/20 transition-all"
             />
-            <p className="text-[10px] text-[var(--text-muted)] mt-1">Press Enter to add.</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">
+              Press Enter to {customLabelExcludeMode ? 'exclude' : 'add'}.
+            </p>
           </div>
         </div>
       </div>

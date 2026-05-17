@@ -79,6 +79,7 @@ export default function GlobalGitHubIssueExplorer() {
   const [excludedLabels, setExcludedLabels] = useState<string[]>([]);
   const [activeLanguages, setActiveLanguages] = useState<string[]>([]);
   const [customLabelInput, setCustomLabelInput] = useState('');
+  const [customLabelExcludeMode, setCustomLabelExcludeMode] = useState(false);
 
   useEffect(() => {
     const savedPat = localStorage.getItem('githubPat');
@@ -236,11 +237,19 @@ export default function GlobalGitHubIssueExplorer() {
         .split(',')
         .map((s) => s.trim())
         .filter(Boolean);
-      const newActive = [...activeLabels];
-      tags.forEach((t) => {
-        if (!newActive.includes(t)) newActive.push(t);
-      });
-      setActiveLabels(newActive);
+      if (customLabelExcludeMode) {
+        setExcludedLabels((prev) => {
+          const next = [...prev];
+          tags.forEach((t) => { if (!next.includes(t)) next.push(t); });
+          return next;
+        });
+      } else {
+        setActiveLabels((prev) => {
+          const next = [...prev];
+          tags.forEach((t) => { if (!next.includes(t)) next.push(t); });
+          return next;
+        });
+      }
       setCustomLabelInput('');
     }
   };
@@ -298,6 +307,8 @@ export default function GlobalGitHubIssueExplorer() {
             customLabelInput={customLabelInput}
             onCustomLabelChange={setCustomLabelInput}
             onCustomLabelKeyDown={handleCustomLabelAdd}
+            customLabelExcludeMode={customLabelExcludeMode}
+            onCustomLabelExcludeModeChange={setCustomLabelExcludeMode}
           />
 
           <div className="flex-1 min-w-0">
