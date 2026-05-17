@@ -6,7 +6,9 @@ interface ActiveFiltersProps {
   unassignedFilter: boolean;
   onClearUnassigned: () => void;
   activeLabels: string[];
+  excludedLabels: string[];
   onRemoveLabel: (name: string) => void;
+  onRemoveExcludedLabel: (name: string) => void;
   activeLanguages: string[];
   onRemoveLanguage: (name: string) => void;
   onClearAll: () => void;
@@ -16,12 +18,14 @@ export function ActiveFilters({
   unassignedFilter,
   onClearUnassigned,
   activeLabels,
+  excludedLabels,
   onRemoveLabel,
+  onRemoveExcludedLabel,
   activeLanguages,
   onRemoveLanguage,
   onClearAll,
 }: ActiveFiltersProps) {
-  const hasAny = unassignedFilter || activeLabels.length > 0 || activeLanguages.length > 0;
+  const hasAny = unassignedFilter || activeLabels.length > 0 || excludedLabels.length > 0 || activeLanguages.length > 0;
   if (!hasAny) return null;
 
   return (
@@ -52,6 +56,21 @@ export function ActiveFilters({
               <Tag className="w-3 h-3" /> {label}
               <button
                 onClick={() => onRemoveLabel(label)}
+                className="ml-0.5 hover:text-white transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          ))}
+
+          {excludedLabels.map((label) => (
+            <span
+              key={`exl-${label}`}
+              className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium bg-[var(--accent-red)]/10 text-[var(--accent-red)] border border-[var(--accent-red)]/20 line-through"
+            >
+              <Tag className="w-3 h-3" /> {label}
+              <button
+                onClick={() => onRemoveExcludedLabel(label)}
                 className="ml-0.5 hover:text-white transition-colors"
               >
                 <X className="w-3 h-3" />

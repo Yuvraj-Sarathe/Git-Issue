@@ -76,6 +76,7 @@ export default function GlobalGitHubIssueExplorer() {
   const [sortParam, setSortParam] = useState('created-desc');
   const [unassignedFilter, setUnassignedFilter] = useState(false);
   const [activeLabels, setActiveLabels] = useState<string[]>([]);
+  const [excludedLabels, setExcludedLabels] = useState<string[]>([]);
   const [activeLanguages, setActiveLanguages] = useState<string[]>([]);
   const [customLabelInput, setCustomLabelInput] = useState('');
 
@@ -139,9 +140,10 @@ export default function GlobalGitHubIssueExplorer() {
     if (searchInput) parts.push(searchInput);
     if (unassignedFilter) parts.push('no:assignee');
     activeLabels.forEach((label) => parts.push(`label:"${label}"`));
+    excludedLabels.forEach((label) => parts.push(`-label:"${label}"`));
     activeLanguages.forEach((lang) => parts.push(`language:${lang}`));
     return parts.join(' ');
-  }, [searchInput, unassignedFilter, activeLabels, activeLanguages]);
+  }, [searchInput, unassignedFilter, activeLabels, excludedLabels, activeLanguages]);
 
   const fetchIssuesList = useCallback(
     async (pageUrl?: string) => {
@@ -198,10 +200,20 @@ export default function GlobalGitHubIssueExplorer() {
   useEffect(() => {
     const timeoutId = setTimeout(() => fetchIssuesList(), 500);
     return () => clearTimeout(timeoutId);
-  }, [sortParam, activeLabels, activeLanguages, unassignedFilter, fetchIssuesList]);
+  }, [sortParam, activeLabels, excludedLabels, activeLanguages, unassignedFilter, fetchIssuesList]);
 
   const toggleLabel = (labelName: string) => {
+    setExcludedLabels((prev) => prev.filter((l) => l !== labelName));
     setActiveLabels((prev) =>
+      prev.includes(labelName)
+        ? prev.filter((l) => l !== labelName)
+        : [...prev, labelName],
+    );
+  };
+
+  const toggleExcludeLabel = (labelName: string) => {
+    setActiveLabels((prev) => prev.filter((l) => l !== labelName));
+    setExcludedLabels((prev) =>
       prev.includes(labelName)
         ? prev.filter((l) => l !== labelName)
         : [...prev, labelName],
@@ -235,6 +247,7 @@ export default function GlobalGitHubIssueExplorer() {
 
   const clearAllFilters = () => {
     setActiveLabels([]);
+    setExcludedLabels([]);
     setActiveLanguages([]);
     setUnassignedFilter(false);
   };
@@ -277,7 +290,9 @@ export default function GlobalGitHubIssueExplorer() {
             unassignedFilter={unassignedFilter}
             onUnassignedChange={setUnassignedFilter}
             activeLabels={activeLabels}
+            excludedLabels={excludedLabels}
             onToggleLabel={toggleLabel}
+            onToggleExcludeLabel={toggleExcludeLabel}
             activeLanguages={activeLanguages}
             onToggleLanguage={toggleLanguage}
             customLabelInput={customLabelInput}
@@ -322,7 +337,9 @@ export default function GlobalGitHubIssueExplorer() {
               unassignedFilter={unassignedFilter}
               onClearUnassigned={() => setUnassignedFilter(false)}
               activeLabels={activeLabels}
+              excludedLabels={excludedLabels}
               onRemoveLabel={toggleLabel}
+              onRemoveExcludedLabel={toggleExcludeLabel}
               activeLanguages={activeLanguages}
               onRemoveLanguage={toggleLanguage}
               onClearAll={clearAllFilters}

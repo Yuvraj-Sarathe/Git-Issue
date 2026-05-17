@@ -1,13 +1,15 @@
 'use client';
 
-import { Filter, Tag, Code, Check, Sprout } from 'lucide-react';
+import { Filter, Tag, Code, Check, X, Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SidebarFiltersProps {
   unassignedFilter: boolean;
   onUnassignedChange: (value: boolean) => void;
   activeLabels: string[];
+  excludedLabels: string[];
   onToggleLabel: (name: string) => void;
+  onToggleExcludeLabel: (name: string) => void;
   activeLanguages: string[];
   onToggleLanguage: (name: string) => void;
   customLabelInput: string;
@@ -57,7 +59,9 @@ export function SidebarFilters(props: SidebarFiltersProps) {
     unassignedFilter,
     onUnassignedChange,
     activeLabels,
+    excludedLabels,
     onToggleLabel,
+    onToggleExcludeLabel,
     activeLanguages,
     onToggleLanguage,
     customLabelInput,
@@ -110,32 +114,47 @@ export function SidebarFilters(props: SidebarFiltersProps) {
           <div className="flex flex-wrap gap-1.5 mb-4">
             {LABELS.map((lbl) => {
               const isActive = activeLabels.includes(lbl.name);
+              const isExcluded = excludedLabels.includes(lbl.name);
               const bgColor = `#${lbl.color}`;
               return (
                 <button
                   key={lbl.name}
-                  onClick={() => onToggleLabel(lbl.name)}
+                  onClick={() => {
+                    if (isActive) onToggleExcludeLabel(lbl.name);
+                    else if (isExcluded) onToggleExcludeLabel(lbl.name);
+                    else onToggleLabel(lbl.name);
+                  }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    if (!isExcluded) onToggleExcludeLabel(lbl.name);
+                  }}
                   title={lbl.description || lbl.name}
                   className={cn(
                     "text-[11px] px-2.5 py-1.5 rounded-full font-medium transition-all border flex items-center gap-1",
                     isActive
                       ? "ring-2 ring-[var(--primary)]/40 ring-offset-1 ring-offset-[var(--surface)] scale-105"
-                      : "opacity-80 hover:opacity-100 hover:scale-105"
+                      : isExcluded
+                        ? "ring-2 ring-[var(--accent-red)]/50 ring-offset-1 ring-offset-[var(--surface)] scale-105 opacity-70 line-through"
+                        : "opacity-80 hover:opacity-100 hover:scale-105"
                   )}
                   style={{
                     backgroundColor: bgColor,
                     color: getTextColorForBg(lbl.color),
-                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderColor: isExcluded ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.1)',
                   }}
                 >
                   {(lbl.name.toLowerCase().includes('first issue') || lbl.name.toLowerCase().includes('help wanted')) && (
                     <Sprout className="w-2.5 h-2.5" />
                   )}
+                  {isExcluded ? <X className="w-2.5 h-2.5" /> : null}
                   {lbl.name}
                 </button>
               );
             })}
           </div>
+          <p className="text-[10px] text-[var(--text-muted)] mt-1">
+            Click to include. Right-click or click again to exclude.
+          </p>
 
           <div className="pt-4 border-t border-white/[0.06]">
             <label className="block text-xs font-medium text-[var(--text-muted)] mb-1.5">
