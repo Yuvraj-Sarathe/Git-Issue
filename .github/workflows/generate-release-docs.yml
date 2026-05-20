@@ -46,4 +46,14 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add version/
-          git diff --quiet && git diff --staged --quiet || (git commit -m "docs(release): auto-generate docs for $VERSION_TAG" && git push --force origin HEAD:main)
+          
+          # Check if there are actual changes to commit
+          if ! git diff --quiet || ! git diff --staged --quiet; then
+            git commit -m "docs(release): auto-generate docs for $VERSION_TAG"
+            
+            # Fetch remote changes and rebase our documentation commit on top of them
+            git pull --rebase origin main
+            
+            # Push cleanly without needing a force flag
+            git push origin HEAD:main
+          fi
