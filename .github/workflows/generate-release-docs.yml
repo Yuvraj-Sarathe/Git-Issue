@@ -45,15 +45,22 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 1. Fetch the latest changes from the remote tracking repository
+          git fetch origin main
+          
+          # 2. Stage the new documentation files
           git add version/
           
           # Check if there are actual changes to commit
           if ! git diff --quiet || ! git diff --staged --quiet; then
+            # 3. Commit the changes locally
             git commit -m "docs(release): auto-generate docs for $VERSION_TAG"
             
-            # Fetch remote changes and rebase our documentation commit on top of them
-            git pull --rebase origin main
+            # 4. Create a temporary local branch out of our commit and rebase it directly onto origin/main
+            git checkout -b temp-docs-branch
+            git rebase origin/main
             
-            # Push cleanly without needing a force flag
+            # 5. Push cleanly from our local rebased HEAD straight into the remote main branch
             git push origin HEAD:main
           fi
