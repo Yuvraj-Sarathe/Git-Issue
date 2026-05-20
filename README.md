@@ -34,3 +34,7 @@ The counter resets **every minute** (not hourly). You can check your current sta
    GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxx"
    ```
 
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details. Any distributed modifications must remain open-source under the same terms.
+
